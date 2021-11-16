@@ -8,6 +8,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+  <script type="text/javascript" src="./words.js"></script>
 </head>
 <body>
     <div class="container">
@@ -19,7 +23,7 @@
         </ul>
         <br/>
         <br/>
-            <textarea class="form-control" id="words">
+            <textarea class="form-control" id="tags">
             </textarea>
             <br/>
             <button onClick="submit()" class="btn btn-default">Verify</button>   
@@ -30,6 +34,68 @@
                 $("#words").val(result)
       });
         }
+
+        $(document).ready(function() {
+    console.log(words.length)
+    var availableTags = words
+    function split( val ) {
+      return val.split( / \s*/ );
+    }
+    function extractLast( term ) {
+        if(term.split(" ").pop()==""){
+            console.log(1)
+            console.log(term)
+            return term
+         } 
+         return term.split(" ").pop();
+        
+    }
+ 
+    $( "#tags" )
+      .on( "change",
+       function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+          event.preventDefault();
+        }
+      }
+      )
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+            console.log(request.term)
+          var term = extractLast(request.term).toLowerCase();
+            console.log(term)
+        var suggestions = $.map(availableTags, function(item) {
+            if(item.startsWith(term)){
+                return item;
+            }
+            else{
+                return null;
+            }
+        });
+
+          //var suggestions = $.ui.autocomplete.filter(availableTags, extractLast( request.term ))
+          suggestions = (suggestions.length === 0 ? ["no suggestions found"] : suggestions.slice(0,5))
+          response(suggestions.slice(0,5));
+        },
+        focus: function() {
+          return false;
+        },
+        select: function( event, ui ) {
+          if( ui.item.value === "no suggestions found"){
+              return false
+          }
+          var terms = split( this.value );
+          terms.pop();
+          terms.push( ui.item.value );
+          terms.push( "" );
+          this.value = terms.join( " " );
+          return false;
+        }
+      });
+  } );
+
     </script>
 
 </body>
