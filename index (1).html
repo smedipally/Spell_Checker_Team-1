@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<h3>Example of auto spell correction</h3>
+		<textarea id="words" ></textarea>
+		<button onClick="submit()">Submit</button>
+<script>
+	function submit(){
+	$.post("http://192.168.0.100:5000/", {words:$("#words").val()}, function(result){
+    		$("#words").val(result)
+  });
+	}
+</script>
+</body>
+</html>						
