@@ -12,6 +12,8 @@
 
     <div class="container">
         <h2>Spell Checker</h2>
+        <h1>Click English for English Language Spell Check</h1>
+        <h1>Click Irish for Irish Language Spell Check</h1>
         <ul class="nav nav-pills">
           <li class="active"><a href="./english.html">English</a></li>
           <li><a href="./irish.html"> Irish </a></li>
