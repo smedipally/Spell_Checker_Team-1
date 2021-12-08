@@ -4,36 +4,141 @@
   <title>Spell Checker</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+  <script type="text/javascript" src="./irishweb2.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>  
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
-
     <div class="container">
-        <h2>Seiceálaí Litrithe</h2>
+        <h2>Spell Checker</h2>
         <br/>
         <ul class="nav nav-pills">
-          <li><a href="english.html">English</a></li>
-          <li class="active"><a href="irish.html"> Irish </a></li>
-          
+          <li ><a href="english.html">English</a></li>
+          <li class="active"><a href="Irish.html"> Irish </a></li>
         </ul>
         <br/>
         <br/>
-        <textarea class="form-control" id="words"></textarea>
+            <textarea class="form-control" id="tags" spellcheck="false"></textarea>
             <br/>
-            <button onClick="submit()" class="btn btn-default">fhíorú</button>   
+            <br/>
+            <br/>
+            <form>
+            <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" size="20" id="blist"></select>
+
+          </form>
       </div>
       <script>
-        function submit(){
-        $.post("http://192.168.1.74:5000/ir", {words:$("#words").val()}, function(result){
-                $("#words").val(result)
-      });
+        $(document).ready(function() {
+          $("#blist").hide();
+    console.log(words.length)
+    var availableTags = words
+    function split( val ) {
+      return val.split( / \s*/ );
+    }
+    function extractLast( term ) {
+        if(term.split(" ").pop()==""){
+            console.log(term)
+            return term
+         } 
+         return term.split(" ").pop();       
+    }
+ 
+    $("#tags")
+      .on( "change",
+       function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+          event.preventDefault();
         }
-    </script>
+      }
+      )
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+            console.log(request.term)
+          var term = extractLast(request.term).toLowerCase();
+            console.log(term)
+        var suggestions = $.map(availableTags, function(item) {
+            if(item.startsWith(term)){
+                return item;
+            }
+            else{
+                return null;
+            }
+        });
+          //var suggestions = $.ui.autocomplete.filter(availableTags, extractLast( request.term ))
+          suggestions = (suggestions.length === 0 ? ["no suggestions found"] : suggestions.slice(0,5))
+          response(suggestions.slice(0,5));
+        },
+        focus: function() {
+          return false;
+        },
+        select: function( event, ui ) {
+          if( ui.item.value === "no suggestions found"){
+              return false
+          }
+          var terms = split( this.value );
+          terms.pop();
+          terms.push( ui.item.value );
+          terms.push( "" );
+          this.value = terms.join( " " );
+          return false;
+        }
+      });
+
+      const sb = document.querySelector("#blist")
+      var textarea = document.getElementById("tags");
+      var start = null
+      var len = 0
+      var end = null
+      var sel = null
+      $("#tags").dblclick(function(e){
+      e.preventDefault()
+      $('#blist').find('option').remove()
+
+      len = textarea.value.length;
+      start = textarea.selectionStart;
+
+      end = textarea.selectionEnd;
+      sel = textarea.value.substring(start, end);
+      $.post("http://192.168.1.89:5000/ir", {words:sel}, function(result){//$("#tags").val()
+                //$("#tags").val(result+ " ")
+                console.log(typeof(result))
+                words = JSON.parse(result)
+                $('#blist').attr("size",words.length+1)
+                $("#blist").show()
+                console.log(words)
+            for(let i=0;i<words.length;++i){
+              if(words[0] ==' ' ){
+                $("#blist").hide()
+                break
+              }
+              const option = new Option(words[i],words[i])
+              sb.add(option)
+      }
+      });
+      
+    })
+
+    $("#blist").click(function(e){
+        e.preventDefault()
+        $("#blist").hide()
+       textarea.value =  textarea.value.substring(0,start) + $('#blist').find(":selected").text() + textarea.value.substring(end,len); 
+       $('#blist').find('option').remove()
        
+    });             
+  });
+
+    </script>
 
 </body>
 </html>
