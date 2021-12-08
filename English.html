@@ -32,11 +32,20 @@
             <br/>
             <br/>
             <form>
+            <!-- <select class="form-select" multiple aria-label="multiple select example" id="list"></select> -->
+
             <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" size="20" id="blist"></select>
 
           </form>
       </div>
       <script>
+          //<button onClick="submit()" class="btn btn-default">Verify</button>   
+    //     function submit(){
+    //     $.post("http://127.0.0.1:5000/en", {words:$("#tags").val()}, function(result){
+    //             $("#tags").val(result)
+    //   });
+    //     }
+
         $(document).ready(function() {
           $("#blist").hide();
     console.log(words.length)
@@ -131,8 +140,82 @@
        textarea.value =  textarea.value.substring(0,start) + $('#blist').find(":selected").text() + textarea.value.substring(end,len); 
        $('#blist').find('option').remove()
        
-    });             
+    });
+
+
+    // $("#tags").autocomplete(  {
+      
+    //   source : function( request, response ) {
+    //     console.log(request);
+    //     response(["mani123", "123"])
+    //   }
+    
+    // }).dblclick(function(){
+    //   alert(1)
+    // })
+
+
+    
+
+    
+    // .autocomplete({
+    //     minLength: 0,
+    //     source: function( request, response ) {
+    //         console.log(request.term)
+    //       var term = extractLast(request.term).toLowerCase();
+    //         console.log(term)
+
+            
+    //     var suggestions = $.map(availableTags, function(item) {
+    //         if(item.startsWith(term)){
+    //             return item;
+    //         }
+    //         else{
+    //             return null;
+    //         }
+    //     });
+    //       //var suggestions = $.ui.autocomplete.filter(availableTags, extractLast( request.term ))
+    //       suggestions = ["homework"] //(suggestions.length === 0 ? ["no suggestions found"] : suggestions.slice(0,5))
+    //       response(suggestions.slice(0,5));
+    //     },
+    //     focus: function() {
+    //       return false;
+    //     },
+    //     select: function( event, ui ) {
+    //       if( ui.item.value === "no suggestions found"){
+    //           return false
+    //       }
+    //       var terms = split( this.value );
+    //       terms.pop();
+    //       terms.push( ui.item.value );
+    //       terms.push( "" );
+    //       this.value = terms.join( " " );
+    //       return false;
+    //     }
+    //   });
+
+
   });
+
+  
+//   $("#tags").autocomplete({
+//     source: function(request,response){
+//       response(["mani","mani"])
+//     },
+//     autoFill: true,
+//     mustMatch: true,
+//     close: function() { $("#tags").validate().element("#tags"); },
+//     mustMatch: true
+// }).dblclick(function() {
+//     $(this).autocomplete("search");
+// });
+
+
+  // $("#tags").on('keydown',function(event){
+  //   if(event.keyCode == 32){
+        
+  //   }
+  // })
 
     </script>
 
